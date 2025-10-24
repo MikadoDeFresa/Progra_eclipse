@@ -10,8 +10,14 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.Scanner;
 
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
+
 import java.awt.Color;
 import javax.swing.SwingConstants;
 
@@ -30,12 +36,13 @@ public class TresEnRaya extends JFrame {
 	private JButton btn9;
 	private JButton btnnuevapartida;
 	private JButton btnsalir;
-	private JLabel jugador2;
-	private JLabel jugador1;
+	private JLabel lblJugador2;
+	private JLabel lblJugador1;
 	private JButton btncolor1;
 	private JButton btncolor2;
 	private JButton botones[];
 	private int turno;
+	private JColorChooser dlgColor;
 	/**
 	 * Launch the application.
 	 */
@@ -73,9 +80,9 @@ public class TresEnRaya extends JFrame {
 		btn3 = new JButton("");
 		contentPane.add(btn3);
 		
-		jugador1 = new JLabel("Jugador 1");
-		jugador1.setHorizontalAlignment(SwingConstants.CENTER);
-		contentPane.add(jugador1);
+		lblJugador1 = new JLabel("Jugador 1");
+		lblJugador1.setHorizontalAlignment(SwingConstants.CENTER);
+		contentPane.add(lblJugador1);
 		
 		btncolor1 = new JButton("");
 		btncolor1.setBackground(new Color(0, 64, 128));
@@ -90,9 +97,9 @@ public class TresEnRaya extends JFrame {
 		btn6 = new JButton("");
 		contentPane.add(btn6);
 		
-		jugador2 = new JLabel("Jugador 2");
-		jugador2.setHorizontalAlignment(SwingConstants.CENTER);
-		contentPane.add(jugador2);
+		lblJugador2 = new JLabel("Jugador 2");
+		lblJugador2.setHorizontalAlignment(SwingConstants.CENTER);
+		contentPane.add(lblJugador2);
 		
 		btncolor2 = new JButton("");
 		btncolor2.setBackground(new Color(128, 0, 64));
@@ -130,7 +137,37 @@ public class TresEnRaya extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				cambioEstado(true);
 				btnnuevapartida.setEnabled(false);
+				btncolor1.setEnabled(false);
+				btncolor2.setEnabled(false);
+				elegirJugadores();
+			}
+		});
+		
+		btncolor1.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dlgColor = new JColorChooser();
+				Color color;
+				color=dlgColor.showDialog(rootPane, "Elige color", btncolor1.getBackground());
 				
+				if (color!=null) {
+					btncolor1.setBackground(color);
+				}
+			}
+		});
+		
+		btncolor2.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dlgColor = new JColorChooser();
+				Color color;
+				color=dlgColor.showDialog(rootPane, "Elige color", btncolor1.getBackground());
+				
+				if (color!=null) {
+					btncolor1.setBackground(color);
+				}
 			}
 		});
 		
@@ -190,5 +227,38 @@ public class TresEnRaya extends JFrame {
 		for(int i=0; i<botones.length; i++) {
 			botones[i].setBackground(btnsalir.getBackground());
 		}
+	}
+	
+	public void elegirJugadores() {
+		Scanner scFich;
+		String linea;
+		int numJugadores, j1, j2;
+		
+		try {
+			scFich = new Scanner(new File("Jugadores.txt"));
+			scFich.nextLine();
+			numJugadores = scFich.nextInt();
+			scFich.nextLine();
+			
+			j1= (int)(Math.random() * (numJugadores + 1));
+			
+			do {
+				j2= (int)(Math.random() * (numJugadores + 1));
+			} while (j1==j2);
+			
+			for(int i=1; i<=numJugadores; i++) {
+				linea=scFich.nextLine();
+				if (j1==i) {
+					lblJugador1.setText(linea);
+				} else if (j2==i) {
+					lblJugador2.setText(linea);
+				}
+			}
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		
+		}
+		
 	}
 }
